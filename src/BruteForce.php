@@ -92,7 +92,9 @@ class BruteForce {
             if (isset($params['callback']) && $params['callback'] instanceof \Closure) {
                 call_user_func($params['callback'], $this->message);
             }
+
             return true;
+
         } else if ($ipFailedAttempts >= $this->failedIpLoginLimit) {
 
             $this->message->setType('ip')
@@ -103,6 +105,7 @@ class BruteForce {
             if (isset($params['callback']) && $params['callback'] instanceof \Closure) {
                 call_user_func($params['callback'], $this->message);
             }
+
             return true;
         }
 
