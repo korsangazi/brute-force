@@ -8,10 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Austinw;
+namespace Austinw\BruteForce;
 
 use Austinw\BruteForce\Database\DatabaseInterface;
-use Austinw\BruteForce\BruteForceException;
 
 /**
  * Class BruteForce
