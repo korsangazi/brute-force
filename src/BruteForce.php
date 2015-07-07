@@ -62,9 +62,7 @@ class BruteForce {
      * $params = array(
      *   'userId'    => $userId,      // user's id
      *   'ipAddress' => $ipAddress,   // ip address (ensure it's dependable i.e. REMOTE_ADDR, HTTP_X_FORWARDED_FOR
-     *   'callback'  => function($type, $numAttempts, $lockedUntil, $lockoutTime) {
-     *     $type = 'user|ip';
-     *   }
+     *   'callback'  => function(Message $message) {}
      * );
      *
      * </code>
@@ -79,12 +77,22 @@ class BruteForce {
 
         if ($userFailedAttempts >= $this->failedUserLoginLimit) {
             if (isset($params['callback']) && $params['callback'] instanceof \Closure) {
-                call_user_func($params['callback'], 'user', $userFailedAttempts, $userFailedAttempts['timeout'], $this->storage->getLockout());
+                $message = new Message();
+                $message->setType('user')
+                    ->setNumAttempts($userFailedAttempts)
+                    ->setLockedUntil($userFailedAttempts['timeout'])
+                    ->setLockoutTime($this->storage->getLockout());
+                call_user_func($params['callback'], $message);
             }
             return true;
         } else if ($ipFailedAttempts >= $this->failedIpLoginLimit) {
             if (isset($params['callback']) && $params['callback'] instanceof \Closure) {
-                call_user_func($params['callback'], 'ip', $userFailedAttempts, $ipFailedAttempts['timeout'], $this->storage->getLockout());
+                $message = new Message();
+                $message->setType('ip')
+                    ->setNumAttempts($userFailedAttempts)
+                    ->setLockedUntil($userFailedAttempts['timeout'])
+                    ->setLockoutTime($this->storage->getLockout());
+                call_user_func($params['callback'], $message);
             }
             return true;
         }
