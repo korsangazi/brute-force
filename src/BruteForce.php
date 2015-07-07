@@ -79,13 +79,14 @@ class BruteForce {
         if (!isset($params['userId']) || !isset($params['ipAddress'])) {
             throw new BruteForceException('Both userId and ipAddress must be passed to BruteForceBlock::isLocked(array $params)');
         }
+
         $userFailedAttempts = $this->storage->retrieveUserFailedLoginAttempts($params['userId']);
         $ipFailedAttempts = $this->storage->retrieveIpFailedLoginAttempts($params['ipAddress']);
 
-        if ($userFailedAttempts['attempts'] >= $this->failedUserLoginLimit) {
+        if ($userFailedAttempts && $userFailedAttempts['attempts'] >= $this->failedUserLoginLimit) {
 
             $this->message->setType('user')
-                ->setNumAttempts($userFailedAttempts)
+                ->setNumAttempts($userFailedAttempts['attempts'])
                 ->setLockedUntil($userFailedAttempts['timeout'])
                 ->setLockoutTime($this->storage->getLockout());
 
@@ -95,11 +96,11 @@ class BruteForce {
 
             return true;
 
-        } else if ($ipFailedAttempts['attempts'] >= $this->failedIpLoginLimit) {
+        } else if ($ipFailedAttempts && $ipFailedAttempts['attempts'] >= $this->failedIpLoginLimit) {
 
             $this->message->setType('ip')
-                ->setNumAttempts($userFailedAttempts)
-                ->setLockedUntil($userFailedAttempts['timeout'])
+                ->setNumAttempts($ipFailedAttempts['attempts'])
+                ->setLockedUntil($ipFailedAttempts['timeout'])
                 ->setLockoutTime($this->storage->getLockout());
 
             if (isset($params['callback']) && $params['callback'] instanceof \Closure) {
