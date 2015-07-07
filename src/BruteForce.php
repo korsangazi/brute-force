@@ -94,6 +94,14 @@ class BruteForce {
     }
 
     /**
+     * @return DatabaseInterface
+     */
+    public function database()
+    {
+        return $this->storage;
+    }
+
+    /**
      * Clear the database
      */
     public function clear()
