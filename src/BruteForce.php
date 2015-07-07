@@ -33,13 +33,20 @@ class BruteForce {
     private $storage;
 
     /**
+     * @var Message
+     */
+    private $message;
+
+    /**
      * @param DatabaseInterface $_db
      * @param int $_lockout Amount of time the user will not be allowed to login for
      */
     public function __construct(DatabaseInterface $_db, $_lockout = 300) {
-		$this->storage = $_db;
+		$this->setStorage($_db);
 
-        $this->storage->setLockout($_lockout);
+        $this->getStorage()->setLockout($_lockout);
+
+        $this->setMessage(new Message());
 	}
 
     /**
@@ -49,7 +56,7 @@ class BruteForce {
      */
     public function addFailedAttempt($userId, $ipAddress){
 
-        $this->storage->insertFailedLoginAttempt($userId, $ipAddress);
+        $this->getStorage()->insertFailedLoginAttempt($userId, $ipAddress);
 
         return true;
 	}
@@ -77,22 +84,20 @@ class BruteForce {
 
         if ($userFailedAttempts >= $this->failedUserLoginLimit) {
             if (isset($params['callback']) && $params['callback'] instanceof \Closure) {
-                $message = new Message();
-                $message->setType('user')
+                $this->message->setType('user')
                     ->setNumAttempts($userFailedAttempts)
                     ->setLockedUntil($userFailedAttempts['timeout'])
                     ->setLockoutTime($this->storage->getLockout());
-                call_user_func($params['callback'], $message);
+                call_user_func($params['callback'], $this->message);
             }
             return true;
         } else if ($ipFailedAttempts >= $this->failedIpLoginLimit) {
             if (isset($params['callback']) && $params['callback'] instanceof \Closure) {
-                $message = new Message();
-                $message->setType('ip')
+                $this->message->setType('ip')
                     ->setNumAttempts($userFailedAttempts)
                     ->setLockedUntil($userFailedAttempts['timeout'])
                     ->setLockoutTime($this->storage->getLockout());
-                call_user_func($params['callback'], $message);
+                call_user_func($params['callback'], $this->message);
             }
             return true;
         }
@@ -115,4 +120,82 @@ class BruteForce {
     {
         $this->storage->clear();
 	}
+
+    /**
+     * @return int
+     */
+    public function getFailedUserLoginLimit()
+    {
+        return $this->failedUserLoginLimit;
+    }
+
+    /**
+     * @param int $failedUserLoginLimit
+     * @return BruteForce
+     */
+    public function setFailedUserLoginLimit($failedUserLoginLimit)
+    {
+        $this->failedUserLoginLimit = $failedUserLoginLimit;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFailedIpLoginLimit()
+    {
+        return $this->failedIpLoginLimit;
+    }
+
+    /**
+     * @param int $failedIpLoginLimit
+     * @return BruteForce
+     */
+    public function setFailedIpLoginLimit($failedIpLoginLimit)
+    {
+        $this->failedIpLoginLimit = $failedIpLoginLimit;
+        return $this;
+    }
+
+    /**
+     * @return DatabaseInterface
+     */
+    public function getStorage()
+    {
+        return $this->storage;
+    }
+
+    /**
+     * @param DatabaseInterface $storage
+     * @return BruteForce
+     */
+    public function setStorage(DatabaseInterface $storage)
+    {
+        $this->storage = $storage;
+        return $this;
+    }
+
+    /**
+     * @return Message
+     */
+    public function getMessage()
+    {
+        if ( ! $this->message) {
+            throw new BruteForceException("Must call BruteForce::checkLocked() before accessing this property");
+        }
+
+        return $this->message;
+    }
+
+    /**
+     * @param Message $message
+     * @return BruteForce
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+        return $this;
+    }
+
+
 }

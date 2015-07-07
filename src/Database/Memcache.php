@@ -130,6 +130,7 @@ class Memcache implements DatabaseInterface {
      */
     public function clear()
     {
+        throw new MemcacheException("Method not yet implemented");
         throw new MemcacheException("Could not clear the database");
     }
 
