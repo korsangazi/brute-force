@@ -42,12 +42,12 @@ class BruteForce {
      * @param int $_lockout Amount of time the user will not be allowed to login for
      */
     public function __construct(DatabaseInterface $_db, $_lockout = 300) {
-		$this->setStorage($_db);
+        $this->setStorage($_db);
 
         $this->getStorage()->setLockout($_lockout);
 
         $this->setMessage(new Message());
-	}
+    }
 
     /**
      * @param $userId
@@ -59,7 +59,7 @@ class BruteForce {
         $this->getStorage()->insertFailedLoginAttempt($userId, $ipAddress);
 
         return true;
-	}
+    }
 
     /**
      * @param array $params
@@ -83,20 +83,24 @@ class BruteForce {
         $ipFailedAttempts = $this->storage->retrieveIpFailedLoginAttempts($params['ipAddress']);
 
         if ($userFailedAttempts >= $this->failedUserLoginLimit) {
+
+            $this->message->setType('user')
+                ->setNumAttempts($userFailedAttempts)
+                ->setLockedUntil($userFailedAttempts['timeout'])
+                ->setLockoutTime($this->storage->getLockout());
+
             if (isset($params['callback']) && $params['callback'] instanceof \Closure) {
-                $this->message->setType('user')
-                    ->setNumAttempts($userFailedAttempts)
-                    ->setLockedUntil($userFailedAttempts['timeout'])
-                    ->setLockoutTime($this->storage->getLockout());
                 call_user_func($params['callback'], $this->message);
             }
             return true;
         } else if ($ipFailedAttempts >= $this->failedIpLoginLimit) {
+
+            $this->message->setType('ip')
+                ->setNumAttempts($userFailedAttempts)
+                ->setLockedUntil($userFailedAttempts['timeout'])
+                ->setLockoutTime($this->storage->getLockout());
+
             if (isset($params['callback']) && $params['callback'] instanceof \Closure) {
-                $this->message->setType('ip')
-                    ->setNumAttempts($userFailedAttempts)
-                    ->setLockedUntil($userFailedAttempts['timeout'])
-                    ->setLockoutTime($this->storage->getLockout());
                 call_user_func($params['callback'], $this->message);
             }
             return true;
@@ -119,7 +123,7 @@ class BruteForce {
     public function clear()
     {
         $this->storage->clear();
-	}
+    }
 
     /**
      * @return int
