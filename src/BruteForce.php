@@ -25,7 +25,7 @@ class BruteForce {
     /**
      * @var int
      */
-    private $failedIpLoginLimit = 3;
+    private $failedIpLoginLimit = 5;
 
     /**
      * @var DatabaseInterface
