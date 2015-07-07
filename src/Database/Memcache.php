@@ -86,13 +86,13 @@ class Memcache implements DatabaseInterface {
         $userAttempts['timeout'] = time() + $this->lockout;
         $userAttempts['attempts'] += 1;
 
-        $this->db->set($userKey, $userAttempts, array('brute_force', 'brute_force_failed'), self::TIMEOUT); // 10 minutes
+        $this->db->set($userKey, $userAttempts, array('brute_force', 'brute_force_failed'), $this->lockout); // 10 minutes
 
         $ipAttempts = $this->retrieveIpFailedLoginAttempts($ipAddress);
         $ipAttempts['timeout'] = time() + $this->lockout;
         $ipAttempts['attempts'] += 1;
 
-        $this->db->set($ipKey, $ipAttempts, array('brute_force', 'brute_force_failed'), self::TIMEOUT); // 10 minutes
+        $this->db->set($ipKey, $ipAttempts, array('brute_force', 'brute_force_failed'), $this->lockout); // 10 minutes
     }
 
     /**
