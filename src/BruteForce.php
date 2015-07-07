@@ -82,7 +82,7 @@ class BruteForce {
         $userFailedAttempts = $this->storage->retrieveUserFailedLoginAttempts($params['userId']);
         $ipFailedAttempts = $this->storage->retrieveIpFailedLoginAttempts($params['ipAddress']);
 
-        if ($userFailedAttempts >= $this->failedUserLoginLimit) {
+        if ($userFailedAttempts['attempts'] >= $this->failedUserLoginLimit) {
 
             $this->message->setType('user')
                 ->setNumAttempts($userFailedAttempts)
@@ -95,7 +95,7 @@ class BruteForce {
 
             return true;
 
-        } else if ($ipFailedAttempts >= $this->failedIpLoginLimit) {
+        } else if ($ipFailedAttempts['attempts'] >= $this->failedIpLoginLimit) {
 
             $this->message->setType('ip')
                 ->setNumAttempts($userFailedAttempts)
