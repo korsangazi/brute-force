@@ -106,9 +106,9 @@ class Message
     /**
      * @return int
      */
-    public function getLockoutTime()
+    public function getLockoutTime($human = false)
     {
-        return $this->lockoutTime;
+        return ($human) ? Carbon::now()->addSeconds($this->lockoutTime)->diffInMinutes() : $this->lockoutTime;
     }
 
     /**
