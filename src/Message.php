@@ -10,6 +10,8 @@
 
 namespace Austinw\BruteForce;
 
+use Carbon\Carbon;
+
 
 /**
  * Class Message
@@ -28,7 +30,7 @@ class Message
     private $numAttempts;
 
     /**
-     * @var int Unix time of when the lockout will cease
+     * @var Carbon time of when the lockout will cease
      */
     private $lockedUntil;
 
@@ -36,6 +38,16 @@ class Message
      * @var int Total seconds of time that the lockout exists
      */
     private $lockoutTime;
+
+
+    /**
+     * @param bool|true $human Human readable format or number of seconds
+     * @return int|string
+     */
+    public function timeRemaining($human = true)
+    {
+        return ($human) ? $this->getLockedUntil()->diffForHumans() : Carbon::now()->diffInSeconds($this->getLockedUntil());
+    }
 
     /**
      * @return string
@@ -74,7 +86,7 @@ class Message
     }
 
     /**
-     * @return int
+     * @return Carbon
      */
     public function getLockedUntil()
     {
@@ -82,10 +94,10 @@ class Message
     }
 
     /**
-     * @param int $lockedUntil
+     * @param Carbon $lockedUntil
      * @return Message
      */
-    public function setLockedUntil($lockedUntil)
+    public function setLockedUntil(Carbon $lockedUntil)
     {
         $this->lockedUntil = $lockedUntil;
         return $this;

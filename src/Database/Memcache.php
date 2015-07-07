@@ -10,6 +10,8 @@
 
 namespace Austinw\BruteForce\Database;
 
+use Carbon\Carbon;
+
 /**
  * Class Memcache
  * @package Austinw\BruteForce\Database
@@ -82,17 +84,20 @@ class Memcache implements DatabaseInterface {
         $userKey = $this->userKey($userId);
         $ipKey = $this->ipKey($ipAddress);
 
+        $lockFor = Carbon::now()->addSeconds($this->lockout);
+
         $userAttempts = $this->retrieveUserFailedLoginAttempts($userId);
-        $userAttempts['timeout'] = time() + $this->lockout;
+
+        $userAttempts['timeout'] = $lockFor;
         $userAttempts['attempts'] += 1;
 
-        $this->db->set($userKey, $userAttempts, array('brute_force', 'brute_force_failed'), $this->lockout); // 10 minutes
+        $this->db->set($userKey, $userAttempts, array('brute_force', 'brute_force_failed'), $this->lockout);
 
         $ipAttempts = $this->retrieveIpFailedLoginAttempts($ipAddress);
-        $ipAttempts['timeout'] = time() + $this->lockout;
+        $ipAttempts['timeout'] = $lockFor;
         $ipAttempts['attempts'] += 1;
 
-        $this->db->set($ipKey, $ipAttempts, array('brute_force', 'brute_force_failed'), $this->lockout); // 10 minutes
+        $this->db->set($ipKey, $ipAttempts, array('brute_force', 'brute_force_failed'), $this->lockout);
     }
 
     /**
@@ -101,7 +106,7 @@ class Memcache implements DatabaseInterface {
      */
     public function retrieveUserFailedLoginAttempts($userId)
     {
-        $timeout = $this->lockout;
+        $timeout = Carbon::now()->addSeconds($this->lockout);
         return $this->db->get($this->userKey($userId), array('brute_force', 'brute_force_failed'), function() use($timeout) {
             return array(
                 'timeout' => $timeout,
