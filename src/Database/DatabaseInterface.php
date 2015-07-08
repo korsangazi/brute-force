@@ -11,9 +11,9 @@
 namespace Austinw\BruteForce\Database;
 
 interface DatabaseInterface {
-    public function insertFailedLoginAttempt($userId, $ipAddress);
+    public function insertFailedLoginAttempt($username, $ipAddress);
 
-    public function retrieveUserFailedLoginAttempts($userId);
+    public function retrieveUserFailedLoginAttempts($username);
 
     public function retrieveIpFailedLoginAttempts($ipAddress);
 

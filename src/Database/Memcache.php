@@ -58,12 +58,12 @@ class Memcache implements DatabaseInterface {
     }
 
     /**
-     * @param $userId
+     * @param $username
      * @return mixed
      */
-    private function userKey($userId)
+    private function userKey($username)
     {
-        return $this->makeKey('failed_user_login_' . $userId);
+        return $this->makeKey('failed_user_login_' . $username);
     }
 
     /**
@@ -76,17 +76,17 @@ class Memcache implements DatabaseInterface {
     }
 
     /**
-     * @param $userId
+     * @param $username
      * @param $ipAddress
      */
-    public function insertFailedLoginAttempt($userId, $ipAddress)
+    public function insertFailedLoginAttempt($username, $ipAddress)
     {
-        $userKey = $this->userKey($userId);
+        $userKey = $this->userKey($username);
         $ipKey = $this->ipKey($ipAddress);
 
         $lockFor = Carbon::now()->addSeconds($this->lockout);
 
-        $userAttempts = $this->retrieveUserFailedLoginAttempts($userId);
+        $userAttempts = $this->retrieveUserFailedLoginAttempts($username);
 
         $userAttempts['timeout'] = $lockFor;
         $userAttempts['attempts'] += 1;
@@ -101,13 +101,13 @@ class Memcache implements DatabaseInterface {
     }
 
     /**
-     * @param $userId
+     * @param $username
      * @return array
      */
-    public function retrieveUserFailedLoginAttempts($userId)
+    public function retrieveUserFailedLoginAttempts($username)
     {
         $timeout = Carbon::now()->addSeconds($this->lockout);
-        return $this->db->get($this->userKey($userId), array('brute_force', 'brute_force_failed'), function() use($timeout) {
+        return $this->db->get($this->userKey($username), array('brute_force', 'brute_force_failed'), function() use($timeout) {
             return array(
                 'timeout' => $timeout,
                 'attempts' => 0,

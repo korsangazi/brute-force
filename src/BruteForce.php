@@ -50,13 +50,13 @@ class BruteForce {
     }
 
     /**
-     * @param $userId
+     * @param $username
      * @param $ipAddress
      * @return bool
      */
-    public function addFailedAttempt($userId, $ipAddress){
+    public function addFailedAttempt($username, $ipAddress){
 
-        $this->getStorage()->insertFailedLoginAttempt($userId, $ipAddress);
+        $this->getStorage()->insertFailedLoginAttempt($username, $ipAddress);
 
         return true;
     }
@@ -67,20 +67,20 @@ class BruteForce {
      * @throws BruteForceException
      * <code>
      * $params = array(
-     *   'userId'    => $userId,      // user's id
-     *   'ipAddress' => $ipAddress,   // ip address (ensure it's dependable i.e. REMOTE_ADDR, HTTP_X_FORWARDED_FOR
-     *   'callback'  => function(Message $message) {}
+     *   'username'    => $username,      // user's id
+     *   'ipAddress'   => $ipAddress,   // ip address (ensure it's dependable i.e. REMOTE_ADDR, HTTP_X_FORWARDED_FOR
+     *   'callback'    => function(Message $message) {}
      * );
      *
      * </code>
      */
     public function checkLocked(array $params)
     {
-        if (!isset($params['userId']) || !isset($params['ipAddress'])) {
-            throw new BruteForceException('Both userId and ipAddress must be passed to BruteForceBlock::isLocked(array $params)');
+        if (!isset($params['username']) || !isset($params['ipAddress'])) {
+            throw new BruteForceException('Both username and ipAddress must be passed to BruteForceBlock::isLocked(array $params)');
         }
 
-        $userFailedAttempts = $this->storage->retrieveUserFailedLoginAttempts($params['userId']);
+        $userFailedAttempts = $this->storage->retrieveUserFailedLoginAttempts($params['username']);
         $ipFailedAttempts = $this->storage->retrieveIpFailedLoginAttempts($params['ipAddress']);
 
         if ($userFailedAttempts && $userFailedAttempts['attempts'] >= $this->failedUserLoginLimit) {
