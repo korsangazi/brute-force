@@ -205,5 +205,39 @@ class BruteForce {
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getTimeframe()
+    {
+        return $this->database()->getTimeframe();
+    }
 
+    /**
+     * @param int Seconds
+     * @return BruteForce
+     */
+    public function setTimeframe($timeframe)
+    {
+        $this->database()->setTimeframe($timeframe);
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLockout()
+    {
+        return $this->database()->getLockout();
+    }
+
+    /**
+     * @param int Seconds
+     * @return BruteForce
+     */
+    public function setLockout($lockout)
+    {
+        $this->database()->setLockout($lockout);
+        return $this;
+    }
 }

@@ -22,4 +22,8 @@ interface DatabaseInterface {
     public function getLockout();
 
     public function setLockout($lockout);
+
+    public function getTimeframe();
+
+    public function setTimeframe($timeframe);
 }

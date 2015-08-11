@@ -16,36 +16,12 @@ use Carbon\Carbon;
  * Class Memcache
  * @package Austinw\BruteForce\Database
  */
-class Memcache implements DatabaseInterface {
+class Memcache extends Database implements DatabaseInterface {
 
-    /**
-     * @var
-     */
-    private $db;
     /**
      * @var
      */
     private $keyMaker;
-
-    /**
-     * Time to lockout the user for
-     * @var int
-     */
-    private $lockout = 300; // 5 minutes
-    
-    /**
-     * Time to be checking for failed login attempts
-     * @var int
-     */
-    private $timeframe = 300; // 5 minutes
-
-    /**
-     * @param $_db
-     */
-    public function __construct($_db)
-    {
-        $this->db = $_db;
-    }
 
     /**
      * @param $callback
@@ -144,37 +120,5 @@ class Memcache implements DatabaseInterface {
     {
         throw new MemcacheException("Method not yet implemented");
         throw new MemcacheException("Could not clear the database");
-    }
-
-    /**
-     * @return int
-     */
-    public function getLockout()
-    {
-        return $this->lockout;
-    }
-
-    /**
-     * @param $_lockout
-     */
-    public function setLockout($_lockout)
-    {
-        $this->lockout = $_lockout;
-    }
-    
-    /**
-     * @return int
-     */
-    public function getTimeframe()
-    {
-        return $this->timeframe;
-    }
-
-    /**
-     * @param $_timeframe
-     */
-    public function setTimeframe($_timeframe)
-    {
-        $this->timeframe = $_timeframe;
     }
 }
