@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Austinw\BruteForce package.
+ * This file is part of the BruteForce package.
  *
  * (c) Austin White <austingym@gmail.com>
  *
@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Austinw\BruteForce\Database;
+namespace BruteForce\Database;
 
 
 class MemcacheException extends \Exception

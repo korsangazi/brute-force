@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Austinw\BruteForce package.
+ * This file is part of the BruteForce package.
  *
  * (c) Austin White <austingym@gmail.com>
  *
@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Austinw\BruteForce;
+namespace BruteForce;
 
-use Austinw\BruteForce\Database\DatabaseInterface;
+use BruteForce\Database\DatabaseInterface;
 
 /**
  * Class BruteForce
@@ -44,7 +44,7 @@ class BruteForce {
     public function __construct(DatabaseInterface $_db, $_lockout = 300) {
         $this->setStorage($_db);
 
-        $this->getStorage()->setLockout($_lockout);
+        $this->getStorage()->setTimeframe($_lockout);
 
         $this->setMessage(new Message());
     }
